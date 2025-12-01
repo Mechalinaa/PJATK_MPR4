@@ -6,10 +6,7 @@ import org.example.models.Position;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class EmployeeService {
     ArrayList<Employee> employeeList = new ArrayList<>();
@@ -179,22 +176,23 @@ public class EmployeeService {
         } else return 0;
     }
 
-    public void findBestEmployees() {
+    public ArrayList<Employee> findBestEmployees() {
         ArrayList<Employee> listOfBestRevs = new ArrayList<>();
         for (Employee emp : employeeList) {
             if (calculateAverageGrade(emp) >= 4.5) {
                 listOfBestRevs.add(emp);
             }
         }
+        return listOfBestRevs;
     }
 
     public Period calculateInternship(Employee employee) {
         return Period.between(employee.getHireDate(), LocalDate.now());
     }
 
-    public void findEmployeesWithLongestInternships() {
+    public ArrayList<Employee> findEmployeesWithLongestInternships() {
         ArrayList<Employee> longestInternship = new ArrayList<>();
-        if (employeeList.isEmpty()) return;
+        if (employeeList.isEmpty()) return longestInternship;
 
         LocalDate earliestHireDate = employeeList.get(0).getHireDate();
 
@@ -207,6 +205,7 @@ public class EmployeeService {
                 longestInternship.add(emp);
             }
         }
+        return longestInternship;
     }
 }
 

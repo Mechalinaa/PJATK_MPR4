@@ -6,8 +6,8 @@ import java.util.Set;
 
 @AllArgsConstructor
 public class AssignmentRequest {
-    String taskId;
-    Set<String> requiredSkills;
-    int requiredHours;
+    public String taskId;
+    public Set<String> requiredSkills;
+    public int requiredHours;
 
 }

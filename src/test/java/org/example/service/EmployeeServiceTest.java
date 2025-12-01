@@ -173,4 +173,126 @@ public class EmployeeServiceTest {
         // Assert
         assertNull(result, "Dla pustej listy powinien zwrócić null");
     }
+    @Test
+    void validateSalaryConsistency_shouldReturnEmployeesWithTooLowSalary() {
+        service.addEmployee(e1); // salary = default for PROGRAMISTA
+        e1.setSalary(1000);      // zbyt niskie
+
+        service.addEmployee(e2); // ma poprawną pensję
+
+        var list = service.validateSalaryConsistency();
+
+        assertEquals(1, list.size());
+        assertTrue(list.contains(e1));
+    }
+    @Test
+    void getCompanyStatistics_shouldReturnCorrectStats() {
+        service.addEmployee(e1);  // FirmaA, salary PROGRAMISTA
+        service.addEmployee(e2);  // FirmaA, salary MANAGER
+        service.addEmployee(e3);  // FirmaB
+
+        var stats = service.getCompanyStatistics();
+
+        assertEquals(2, stats.get("FirmaA").employeeNumber);
+        assertEquals((e1.getSalary() + e2.getSalary()) / 2, stats.get("FirmaA").avgSalary);
+        assertEquals(e2, stats.get("FirmaA").personwithBiggestSalary);
+    }
+
+    @Test
+    void giveRaise_shouldPromoteEmployeeWhenNewPositionHigher() {
+        service.addEmployee(e3);  // STAŻYSTA
+
+        service.giveRaise(e3, Position.PROGRAMISTA);
+
+        assertEquals(Position.PROGRAMISTA, e3.getPosition());
+        assertEquals(Position.PROGRAMISTA.getSalary(), e3.getSalary());
+    }
+
+    @Test
+    void giveRaise_shouldNotDowngradeOrEqualPosition() {
+        service.addEmployee(e1); // PROGRAMISTA
+
+        service.giveRaise(e1, Position.STAZYSTA); // niższe stanowisko
+
+        assertEquals(Position.PROGRAMISTA, e1.getPosition());
+    }
+    @Test
+    void givePercentageRaise_shouldIncreaseSalaryWithinLimit() {
+        service.addEmployee(e1); // PROGRAMISTA
+
+        double old = e1.getSalary();
+        service.givePercentageRaise(e1, 10); // +10%
+
+        assertEquals(old * 1.10, e1.getSalary(), 0.0001);
+    }
+
+    @Test
+    void givePercentageRaise_shouldNotExceedMaxSalary() {
+        service.addEmployee(e1);
+
+        // ustawiamy salary prawie max
+        e1.setSalary(Position.PROGRAMISTA.getMaxSalary());
+
+        service.givePercentageRaise(e1, 10); // powinno odmówić i nic nie zmienić
+
+        assertEquals(Position.PROGRAMISTA.getMaxSalary(), e1.getSalary());
+    }
+
+    @Test
+    void calculateAverageGrade_shouldReturnAverage() {
+        e1.addGrade(5);
+        e1.addGrade(3);
+        e1.addGrade(4);
+
+        double average = service.calculateAverageGrade(e1);
+
+        assertEquals((5 + 3 + 4) / 3.0, average);
+    }
+
+    @Test
+    void calculateAverageGrade_emptyList_shouldReturnZero() {
+        double average = service.calculateAverageGrade(e1);
+
+        assertEquals(0, average);
+    }
+
+    @Test
+    void findBestEmployees_shouldExecuteWithoutCrashing() {
+        e1.addGrade(5);
+        e1.addGrade(4);
+        e1.addGrade(5);
+
+        service.addEmployee(e1);
+        service.addEmployee(e2);
+
+        service.findBestEmployees();
+    }
+    @Test
+    void calculateInternship_shouldReturnNonNegativePeriod() {
+        service.addEmployee(e1);
+
+        var period = service.calculateInternship(e1);
+
+        assertTrue(period.getYears() >= 0);
+    }
+
+    @Test
+    void findEmployeesWithLongestInternships_shouldRunCorrectly() throws NoSuchFieldException, IllegalAccessException {
+        // tworzymy pracownika ze sztucznie wczesną datą zatrudnienia
+        Employee old = new Employee("Old", "Man", "old@f.pl", "X", Position.MANAGER);
+        old.setSalary(8000);
+        old.getListOfRevs().clear();
+        old.setProjectGroup(null);
+
+        // manipulujemy datą: 5 lat temu
+        var field = Employee.class.getDeclaredField("hireDate");
+        field.setAccessible(true);
+        field.set(old, old.getHireDate().minusYears(5));
+
+        service.addEmployee(old);
+        service.addEmployee(e1);
+
+        service.findEmployeesWithLongestInternships(); // pokrycie linii
+    }
+
 }
