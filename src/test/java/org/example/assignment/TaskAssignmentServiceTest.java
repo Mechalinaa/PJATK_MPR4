@@ -64,6 +64,6 @@ class TaskAssignmentServiceTest {
         assertTrue(result.isPresent());
         assertEquals(e2, result.get());
         assertEquals(1, allocationSpy.calls);
-        assertEquals(e2, allocationSpy.lastAssigned);
+        assertEquals(e2, allocationSpy.lastAssigned); //assertall fake i spy
     }
 }
