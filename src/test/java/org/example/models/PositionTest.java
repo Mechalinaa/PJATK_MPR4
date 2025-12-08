@@ -5,50 +5,51 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PositionTest {
+class PositionTest {
 
-    private double prezesSalary;
-    private double wiceprezesSalary;
-    private double managerSalary;
-    private double programistaSalary;
-    private double stazystaSalary;
+    private double prezes;
+    private double wice;
+    private double manager;
+    private double programista;
+    private double stazysta;
 
     @BeforeEach
     void setUp() {
-        prezesSalary = Position.PREZES.getSalary();
-        wiceprezesSalary = Position.WICEPREZES.getSalary();
-        managerSalary = Position.MANAGER.getSalary();
-        programistaSalary = Position.PROGRAMISTA.getSalary();
-        stazystaSalary = Position.STAZYSTA.getSalary();
+        prezes = Position.PREZES.getSalary();
+        wice = Position.WICEPREZES.getSalary();
+        manager = Position.MANAGER.getSalary();
+        programista = Position.PROGRAMISTA.getSalary();
+        stazysta = Position.STAZYSTA.getSalary();
     }
 
     @Test
     void enumSalaries_shouldBePositive() {
-        // Act & Assert
-        assertTrue(prezesSalary > 0, "Pensja prezesa powinna być dodatnia");
-        assertTrue(wiceprezesSalary > 0, "Pensja wiceprezesa powinna być dodatnia");
-        assertTrue(managerSalary > 0, "Pensja managera powinna być dodatnia");
-        assertTrue(programistaSalary > 0, "Pensja programisty powinna być dodatnia");
-        assertTrue(stazystaSalary > 0, "Pensja stażysty powinna być dodatnia");
+        assertAll(
+                () -> assertTrue(prezes > 0),
+                () -> assertTrue(wice > 0),
+                () -> assertTrue(manager > 0),
+                () -> assertTrue(programista > 0),
+                () -> assertTrue(stazysta > 0)
+        );
     }
 
     @Test
-    void enumSalaries_shouldBeOrderedFromHighestToLowest() {
-        // Act & Assert
-        assertTrue(prezesSalary > wiceprezesSalary, "Prezes powinien zarabiać więcej niż wiceprezes");
-        assertTrue(wiceprezesSalary > managerSalary, "Wiceprezes powinien zarabiać więcej niż manager");
-        assertTrue(managerSalary > programistaSalary, "Manager powinien zarabiać więcej niż programista");
-        assertTrue(programistaSalary > stazystaSalary, "Programista powinien zarabiać więcej niż stażysta");
+    void enumSalaries_shouldBeOrdered() {
+        assertAll(
+                () -> assertTrue(prezes > wice),
+                () -> assertTrue(wice > manager),
+                () -> assertTrue(manager > programista),
+                () -> assertTrue(programista > stazysta)
+        );
     }
 
     @Test
-    void allPositions_shouldExistAndBeAccessible() {
-        // Act
-        Position[] allPositions = Position.values();
-
-        // Assert
-        assertEquals(5, allPositions.length, "Enum Position powinien mieć 5 wartości");
-        assertNotNull(Position.valueOf("PREZES"), "Enum powinien zawierać PREZES");
-        assertNotNull(Position.valueOf("PROGRAMISTA"), "Enum powinien zawierać PROGRAMISTA");
+    void allPositions_shouldExist() {
+        Position[] values = Position.values();
+        assertAll(
+                () -> assertEquals(5, values.length),
+                () -> assertNotNull(Position.valueOf("PREZES")),
+                () -> assertNotNull(Position.valueOf("PROGRAMISTA"))
+        );
     }
 }

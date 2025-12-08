@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EmployeeTest {
+class EmployeeTest {
 
     private Employee emp1;
     private Employee emp2;
@@ -20,26 +20,24 @@ public class EmployeeTest {
 
     @Test
     void equalsAndHashCode_basedOnEmail() {
-        // Act & Assert
-        assertEquals(emp1, emp2, "Dwa obiekty z tym samym emailem powinny być równe (equals)");
-        assertEquals(emp1.hashCode(), emp2.hashCode(), "hashCode powinien być zgodny dla tych obiektów");
-        assertNotEquals(emp1, emp3, "Różne emaile to różne obiekty");
+        assertAll(
+                () -> assertEquals(emp1, emp2),
+                () -> assertEquals(emp1.hashCode(), emp2.hashCode()),
+                () -> assertNotEquals(emp1, emp3)
+        );
     }
 
     @Test
     void constructor_setsSalaryFromPosition() {
-        // Arrange
         Position position = Position.STAZYSTA;
-
-        // Act
         Employee e = new Employee("Marek", "Nowy", "marek@f.pl", "FirmaX", position);
 
-        // Assert
-        assertEquals(position.getSalary(), e.getSalary(), "Konstruktor powinien ustawić salary zgodnie z position");
+        assertAll(
+                () -> assertEquals(position.getSalary(), e.getSalary())
+        );
     }
 
     @Test
-        //czy wszystkie settery dzialaja
     void setters_acceptValidValues() {
         Employee e = new Employee("A", "B", "a@b.pl", "Firma", Position.MANAGER);
 
@@ -55,15 +53,15 @@ public class EmployeeTest {
 
     @Test
     void setters_shouldThrowOnInvalidInputs() {
-        // Arrange
         Employee e = new Employee("Adam", "Kowal", "adam@f.pl", "FirmaZ", Position.PROGRAMISTA);
 
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> e.setName(""), "Puste imię powinno rzucić wyjątek");
-        assertThrows(IllegalArgumentException.class, () -> e.setSurname("   "), "Puste nazwisko powinno rzucić wyjątek");
-        assertThrows(IllegalArgumentException.class, () -> e.setEmail("invalidEmail"), "Email bez @ powinien rzucić wyjątek");
-        assertThrows(IllegalArgumentException.class, () -> e.setCompanyName(""), "Pusta nazwa firmy powinna rzucić wyjątek");
-        assertThrows(IllegalArgumentException.class, () -> e.setPosition(null), "Null jako stanowisko -> wyjątek");
-        assertThrows(IllegalArgumentException.class, () -> e.setSalary(-1), "Ujemna pensja -> wyjątek");
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> e.setName("")),
+                () -> assertThrows(IllegalArgumentException.class, () -> e.setSurname("   ")),
+                () -> assertThrows(IllegalArgumentException.class, () -> e.setEmail("invalidEmail")),
+                () -> assertThrows(IllegalArgumentException.class, () -> e.setCompanyName("")),
+                () -> assertThrows(IllegalArgumentException.class, () -> e.setPosition(null)),
+                () -> assertThrows(IllegalArgumentException.class, () -> e.setSalary(-1))
+        );
     }
 }

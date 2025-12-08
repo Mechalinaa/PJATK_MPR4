@@ -54,8 +54,11 @@ class EmployeeExportServiceTest {
         service.exportToFile("plik.txt");
 
         // then
-        assertEquals(1, writerSpy.calls);
-        assertEquals("plik.txt", writerSpy.lastName);
-        assertEquals("TEST_FORMAT", writerSpy.lastContent);
+        assertAll(
+                () -> assertEquals(1, writerSpy.calls),
+                () -> assertEquals("plik.txt", writerSpy.lastName),
+                () -> assertEquals("TEST_FORMAT", writerSpy.lastContent)
+        );
+
     }
 }

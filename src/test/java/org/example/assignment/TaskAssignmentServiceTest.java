@@ -61,9 +61,12 @@ class TaskAssignmentServiceTest {
         Optional<Employee> result = service.assign(req);
 
         // then
-        assertTrue(result.isPresent());
-        assertEquals(e2, result.get());
-        assertEquals(1, allocationSpy.calls);
-        assertEquals(e2, allocationSpy.lastAssigned);
+        assertAll(
+                () -> assertTrue(result.isPresent()),
+                () -> assertEquals(e2, result.get()),
+                () -> assertEquals(1, allocationSpy.calls),
+                () -> assertEquals(e2, allocationSpy.lastAssigned)
+        );
+
     }
 }

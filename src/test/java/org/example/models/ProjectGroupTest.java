@@ -24,8 +24,10 @@ class ProjectGroupTest {
 
         group.addMember(emp);
 
-        assertEquals(1, group.getMembers().size());
-        assertEquals(group, emp.getProjectGroup());
+        assertAll(
+                () -> assertEquals(1, group.getMembers().size()),
+                () -> assertEquals(group, emp.getProjectGroup())
+        );
     }
 
     @Test
@@ -34,10 +36,12 @@ class ProjectGroupTest {
         Employee emp2 = createEmployee("b@b.pl", Position.PROGRAMISTA);
 
         group.addMember(emp1);
-        group.addMember(emp2); // drugi PROGRAMISTA → powinien zostać odrzucony
+        group.addMember(emp2);
 
-        assertEquals(1, group.getMembers().size());
-        assertNull(emp2.getProjectGroup());
+        assertAll(
+                () -> assertEquals(1, group.getMembers().size()),
+                () -> assertNull(emp2.getProjectGroup())
+        );
     }
 
     @Test
@@ -49,11 +53,12 @@ class ProjectGroupTest {
         group.addMember(createEmployee("5@a.pl", Position.STAZYSTA));
 
         Employee extra = createEmployee("6@a.pl", Position.PROGRAMISTA);
-
         group.addMember(extra);
 
-        assertEquals(5, group.getMembers().size());
-        assertNull(extra.getProjectGroup());
+        assertAll(
+                () -> assertEquals(5, group.getMembers().size()),
+                () -> assertNull(extra.getProjectGroup())
+        );
     }
 
     @Test
@@ -62,11 +67,12 @@ class ProjectGroupTest {
         Employee emp = createEmployee("x@x.pl", Position.MANAGER);
 
         previousGroup.addMember(emp);
-
         group.addMember(emp);
 
-        assertEquals(0, previousGroup.getMembers().size());
-        assertEquals(1, group.getMembers().size());
-        assertEquals(group, emp.getProjectGroup());
+        assertAll(
+                () -> assertEquals(0, previousGroup.getMembers().size()),
+                () -> assertEquals(1, group.getMembers().size()),
+                () -> assertEquals(group, emp.getProjectGroup())
+        );
     }
 }
